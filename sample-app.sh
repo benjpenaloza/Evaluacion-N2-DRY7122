@@ -1,5 +1,7 @@
 #!/bin/bash
 
+rm -rf tempdir
+
 mkdir tempdir
 mkdir tempdir/templates
 mkdir tempdir/static
@@ -14,9 +16,14 @@ echo "COPY ./static /home/myapp/static/" >> tempdir/Dockerfile
 echo "COPY ./templates /home/myapp/templates/" >> tempdir/Dockerfile
 echo "COPY sample_app.py /home/myapp/" >> tempdir/Dockerfile
 echo "EXPOSE 9999" >> tempdir/Dockerfile
-echo "CMD python /home/myapp/sample_app.py" >> tempdir/Dockerfile
+echo 'CMD ["python","/home/myapp/sample_app.py"]' >> tempdir/Dockerfile
 
 cd tempdir
+
+docker rm -f samplerunning || true
+
 docker build -t sampleapp .
+
 docker run -t -d -p 9999:9999 --name samplerunning sampleapp
+
 docker ps -a
